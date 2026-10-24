@@ -25,3 +25,13 @@ jobs:
         with:
           name: svl-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
+      - name: Prepare offline signer for local personalization
+        run: |
+          mkdir -p signing
+          SIGNER=$(find "$ANDROID_HOME/build-tools" -name apksigner.jar -type f | sort -V | tail -1)
+          echo "Using signer: $SIGNER"
+          cp "$SIGNER" signing/apksigner.jar
+      - uses: actions/upload-artifact@v4
+        with:
+          name: svl-apk-signing-tool
+          path: signing/apksigner.jar
