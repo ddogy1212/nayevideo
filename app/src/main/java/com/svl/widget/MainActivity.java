@@ -57,6 +57,13 @@ public class MainActivity extends Activity {
         addSpace(root, 25);
         root.addView(button("기본 사진 바꾸기", () -> choose("image/*", REQUEST_PHOTO)));
         addSpace(root, 12);
+        root.addView(button("사진 방향 90° 돌리기 ↻", () -> {
+            WidgetMedia.rotatePhoto90(this);
+            updatePreview();
+            SvlWidgetProvider.renderAll(this);
+            Toast.makeText(this, "사진 방향을 저장했어! ♡", Toast.LENGTH_SHORT).show();
+        }));
+        addSpace(root, 12);
         root.addView(button("영상 바꾸기", () -> choose("video/*", REQUEST_VIDEO)));
         addSpace(root, 12);
         root.addView(button("홈 화면에 2×2 위젯 추가", this::pinWidget));
@@ -77,13 +84,18 @@ public class MainActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK || data == null || data.getData() == null) return;
         if (requestCode != REQUEST_PHOTO && requestCode != REQUEST_VIDEO) return;
-        String filename = requestCode == REQUEST_PHOTO ? WidgetMedia.PHOTO : WidgetMedia.VIDEO;
-        try (InputStream input = getContentResolver().openInputStream(data.getData());
-             FileOutputStream output = new FileOutputStream(WidgetMedia.file(this, filename))) {
-            if (input == null) throw new IllegalStateException("파일을 읽지 못했습니다.");
-            byte[] buffer = new byte[8192];
-            int n;
-            while ((n = input.read(buffer)) != -1) output.write(buffer, 0, n);
+        try {
+            if (requestCode == REQUEST_PHOTO) {
+                WidgetMedia.importPhoto(this, data.getData());
+            } else {
+                try (InputStream input = getContentResolver().openInputStream(data.getData());
+                     FileOutputStream output = new FileOutputStream(WidgetMedia.file(this, WidgetMedia.VIDEO))) {
+                    if (input == null) throw new IllegalStateException("파일을 읽지 못했습니다.");
+                    byte[] buffer = new byte[8192];
+                    int n;
+                    while ((n = input.read(buffer)) != -1) output.write(buffer, 0, n);
+                }
+            }
             Toast.makeText(this, "저장했어! ♡", Toast.LENGTH_SHORT).show();
             updatePreview();
             SvlWidgetProvider.renderAll(this);
@@ -91,6 +103,7 @@ public class MainActivity extends Activity {
             Toast.makeText(this, "파일 저장 실패: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
+
     private void updatePreview() {
         Bitmap bitmap = WidgetMedia.photo(this, 480);
         preview.setImageBitmap(bitmap);
