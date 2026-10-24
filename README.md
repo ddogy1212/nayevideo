@@ -21,3 +21,13 @@ The separate ZIP shared inside the ChatGPT conversation includes `app/src/main/a
 - The audio plays via `MediaPlayer` in a `mediaPlayback` foreground service launched by tapping the widget. A playback notification may show.
 - The first playback may pause briefly while decoding frames.
 - No overlay permission, no accessibility permission, and no internet connection are needed.
+
+## v1.1: Photo orientation fix
+
+Samsung Gallery photos may store rotation as EXIF metadata. The app now
+applies all eight EXIF orientations, normalizes new imports as upright,
+center-cropped JPEGs, and also repairs legacy saved photos on display.
+The new **사진 방향 90° 돌리기 ↻** button lets the user correct any unusual
+image directly; it updates the preview and all widget instances and is
+saved across widget updates/reboots. Photo imports reset manual rotation.
+Update the signed APK without uninstalling to preserve existing settings.
