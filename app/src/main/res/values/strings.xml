@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">svl</string>
+    <string name="widget_description">사진을 누르면 소리와 함께 짧은 영상을 재생하는 svl 위젯</string>
+</resources>

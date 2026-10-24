@@ -1,0 +1,10 @@
+.gradle/
+build/
+**/build/
+.idea/
+*.iml
+local.properties
+*.apk
+# Personal media is not published in this public GitHub repository.
+app/src/main/assets/*
+!app/src/main/assets/.gitkeep
